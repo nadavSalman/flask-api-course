@@ -1,22 +1,30 @@
 from flask_restful import Resource, Api, reqparse
 # flask_restful is an abstraction above flase to make the focouse of rest api more esyee.
 from flask import Flask, request
+from crud_auxiliary import find_by_name
+
 
 
 app = Flask(__name__)
 api = Api(app)
 
 items = []
-
+'''
+End point implementation:
+Header : {Content-Type: application/json}
+GET   /items            Done
+GET   /item/<name>      Done
+POST  /item/<name>      Done
+DEL   /item/<name>
+PUT   /item/<name>
+'''
 class Item(Resource):
     def get(self,name):
         print(items)
-        search = {item['name']:item['price']  for item in items if item['name'] == name }
-        if len(search) != 0:
-            return search
-        # for item in items:
-        #     if item['name'] == name:
-        #         return item
+        search = find_by_name(items,name)
+        print(search)
+        if search[1]:
+            return search[0], 200
         return {'item':'Item not fount'},404
     
     def post(self, name):
@@ -25,9 +33,13 @@ class Item(Resource):
         items.append(item)
         return item, 201
     
-    
-    
-    # def delete(self,name):
+    def delete(self,name):
+        search = find_by_name(items,name)
+        if search[1]:
+            return search[0], 200
+        return {'item':'Item not fount'},404
+        
+        
         
         
     
